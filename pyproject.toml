@@ -1,0 +1,26 @@
+[tool.poetry]
+name = "bdf2lvgl"
+version = "0.1.0"
+description = "Convert bitmap fonts in BDF format to the LVGL font format."
+authors = ["summivox <summivox@gmail.com>"]
+license = "GPLv2"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+bdflib = "^1.1.3"
+numpy = "^1.21.1"
+click = "^8.0.1"
+
+[tool.poetry.dev-dependencies]
+yapf = "^0.31.0"
+toml = "^0.10.2"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+bdf2lvgl = "bdf2lvgl.main:main"
+
+[tool.yapf]
+based_on_style = "pep8"
