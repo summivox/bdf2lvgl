@@ -96,9 +96,12 @@ LV_CMAPS_FOOTER = '};\n\n'
 
 def lv_font_dsc(name, cmap_num, line_height, base_line):
     return dedent(f'''\
-        #if LV_VERSION_CHECK(8, 0, 0)
+        #if LVGL_VERSION_MAJOR == 8
         /*Store all the custom data of the font*/
         static  lv_font_fmt_txt_glyph_cache_t cache;
+        #endif
+
+        #if LVGL_VERSION_MAJOR >= 8
         static const lv_font_fmt_txt_dsc_t font_dsc = {{
         #else
         static lv_font_fmt_txt_dsc_t font_dsc = {{
@@ -112,13 +115,13 @@ def lv_font_dsc(name, cmap_num, line_height, base_line):
             .bpp = 1,
             .kern_classes = 0,
             .bitmap_format = 0,
-        #if LV_VERSION_CHECK(8, 0, 0)
+        #if LVGL_VERSION_MAJOR == 8
             .cache = &cache
         #endif
         }};
 
         /*Initialize a public general font descriptor*/
-        #if LV_VERSION_CHECK(8, 0, 0)
+        #if LVGL_VERSION_MAJOR >= 8
         const lv_font_t {name} = {{
         #else
         lv_font_t {name} = {{
@@ -130,11 +133,15 @@ def lv_font_dsc(name, cmap_num, line_height, base_line):
         #if !(LVGL_VERSION_MAJOR == 6 && LVGL_VERSION_MINOR == 0)
             .subpx = LV_FONT_SUBPX_NONE,
         #endif
-        #if LV_VERSION_CHECK(7, 4, 0)
+        #if LV_VERSION_CHECK(7, 4, 0) || LVGL_VERSION_MAJOR >= 8
             .underline_position = 0,
             .underline_thickness = 0,
         #endif
-            .dsc = &font_dsc           /*The custom font data. Will be accessed by `get_glyph_bitmap/dsc` */
+            .dsc = &font_dsc,          /*The custom font data. Will be accessed by `get_glyph_bitmap/dsc` */
+        #if LV_VERSION_CHECK(8, 2, 0) || LVGL_VERSION_MAJOR >= 9
+            .fallback = NULL,
+        #endif
+            .user_data = NULL
         }};
         ''')
 
@@ -148,6 +155,14 @@ def print_lv_bitmap(a: list[int], w: int):
 
 def gen_lv_font(parsed):
     result = LV_HEADER
+
+    result += f'''\
+    #ifndef {name.upper()}
+    #define {name.upper()} 1
+    #endif
+
+    #if {name.upper()}\n'
+    '''
 
     result += LV_GLYPH_HEADER
     for bitmap, codepoint in zip(parsed['bitmaps'], parsed['codepoints']):
@@ -208,5 +223,7 @@ def gen_lv_font(parsed):
         line_height=parsed['height'],
         base_line=parsed['descent'],
     )
+
+    result += f'#endif {name.upper()}\n'
 
     return result
