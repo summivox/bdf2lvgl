@@ -154,15 +154,16 @@ def print_lv_bitmap(a: list[int], w: int):
 
 
 def gen_lv_font(parsed):
+    font_name = parsed['name']
     result = LV_HEADER
 
-    result += f'''\
-    #ifndef {name.upper()}
-    #define {name.upper()} 1
+    result += dedent(f'''\
+    #ifndef {font_name.upper()}
+    #define {font_name.upper()} 1
     #endif
 
-    #if {name.upper()}\n'
-    '''
+    #if {font_name.upper()}\n
+    ''')
 
     result += LV_GLYPH_HEADER
     for bitmap, codepoint in zip(parsed['bitmaps'], parsed['codepoints']):
@@ -218,12 +219,12 @@ def gen_lv_font(parsed):
     result += LV_CMAPS_FOOTER
 
     result += lv_font_dsc(
-        name=parsed['name'],
+        name=font_name,
         cmap_num=len(parsed['cp_parts']),
         line_height=parsed['height'],
         base_line=parsed['descent'],
     )
 
-    result += f'#endif {name.upper()}\n'
+    result += f'#endif /* {font_name.upper()} */\n'
 
     return result
