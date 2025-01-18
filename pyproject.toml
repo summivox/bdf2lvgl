@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "bdf2lvgl"
-version = "0.2.0"
+version = "0.2.1"
 description = "Convert bitmap fonts in BDF format to the LVGL font format."
 authors = ["summivox <summivox@gmail.com>"]
 license = "GPLv2"
