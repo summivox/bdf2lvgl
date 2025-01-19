@@ -8,7 +8,7 @@ This tool attempts to solve that problem.
 
 ## Usage
 
-1. Install Python 3.9 and [Poetry](https://python-poetry.org/).
+1. Install Python \^3.10 and [Poetry](https://python-poetry.org/).
 2. Clone this repo.
 3. `cd` into repo root
 4. `poetry run bdf2lvgl path/to/your/font.bdf`
